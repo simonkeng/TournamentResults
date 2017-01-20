@@ -6,9 +6,15 @@
 import psycopg2
 
 
-def connect():
+def connect(database_name="tournament"):
     """Connect to the PostgreSQL database. Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        db = psycopg2.connect("dbname={}".format(database_name))
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print "ERROR"
+
 
 
 def deleteMatches():
@@ -29,10 +35,11 @@ def deletePlayers():
     connection = connect()
     c = connection.cursor()
 
-    c.execute("TRUNCATE players;")
+    c.execute("TRUNCATE players CASCADE;")
 
     connection.commit()
     connection.close()
+
 
 def countPlayers():
     """Returns the number of players currently registered."""
@@ -48,7 +55,6 @@ def countPlayers():
     connection.close()
 
     return count
-
 
 
 def registerPlayer(name):
@@ -68,8 +74,6 @@ def registerPlayer(name):
 
     connection.commit()
     connection.close()
-
-
 
 
 def playerStandings():
@@ -117,7 +121,7 @@ def reportMatch(winner, loser):
     c = connection.cursor()
 
     c.execute("""INSERT INTO matches (winner_id, loser_id)
-                VALUES (%s, %s);""", (winner,loser,))
+                VALUES (%s, %s);""", (winner, loser,))
 
     connection.commit()
     connection.close()
@@ -162,7 +166,6 @@ def swissPairings():
     return final_pairs
 
 
-
 # Note: swissPairings() could also be done like this:
 
 # standings = playerStandings()
@@ -176,7 +179,5 @@ def swissPairings():
 # and this doesn't even involve the makePairs() function.
 
 
-
 # debugging/dev
 # swissPairings()
-
