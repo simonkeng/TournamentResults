@@ -20,8 +20,7 @@ def connect(database_name="tournament"):
 def deleteMatches():
     """Remove all the match records from the database."""
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("TRUNCATE matches;")
 
@@ -32,8 +31,7 @@ def deleteMatches():
 def deletePlayers():
     """Remove all the player records from the database."""
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("TRUNCATE players CASCADE;")
 
@@ -44,8 +42,7 @@ def deletePlayers():
 def countPlayers():
     """Returns the number of players currently registered."""
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("SELECT COUNT(*) FROM players;")
 
@@ -67,8 +64,7 @@ def registerPlayer(name):
       name: the player's full name (need not be unique).
     """
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("INSERT INTO players (name) VALUES (%s)", (name,))
 
@@ -90,8 +86,7 @@ def playerStandings():
         matches: the number of matches the player has played
     """
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("""SELECT players.id, players.name,
                 (SELECT COUNT(*) FROM matches WHERE players.id = matches.winner_id)
@@ -117,8 +112,7 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
 
-    connection = connect()
-    c = connection.cursor()
+    connection, c = connect()
 
     c.execute("""INSERT INTO matches (winner_id, loser_id)
                 VALUES (%s, %s);""", (winner, loser,))
